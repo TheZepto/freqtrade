@@ -1,10 +1,11 @@
 # pragma pylint: disable=missing-docstring, too-many-arguments, too-many-ancestors, C0103
 
 import time
-import pytest
 from unittest.mock import MagicMock
 
-from freqtrade.fiat_convert import CryptoToFiatConverter, CryptoFiat
+import pytest
+
+from freqtrade.fiat_convert import CryptoFiat, CryptoToFiatConverter
 
 
 def test_pair_convertion_object():
@@ -116,8 +117,8 @@ def test_fiat_convert_get_price(mocker):
 
 
 def test_fiat_convert_without_network(mocker):
-    Pymarketcap = MagicMock(side_effect=ImportError('Oh boy, you have no network!'))
-    mocker.patch('freqtrade.fiat_convert.Pymarketcap', Pymarketcap)
+    pymarketcap = MagicMock(side_effect=ImportError('Oh boy, you have no network!'))
+    mocker.patch('freqtrade.fiat_convert.Pymarketcap', pymarketcap)
 
     fiat_convert = CryptoToFiatConverter()
     assert fiat_convert._coinmarketcap is None

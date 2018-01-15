@@ -4,14 +4,14 @@ Functions to analyze ticker data with indicators and produce buy and sell signal
 import logging
 from datetime import timedelta
 from enum import Enum
-from typing import List, Dict
+from typing import Dict, List
 
 import arrow
 import talib.abstract as ta
 from pandas import DataFrame, to_datetime
 
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.exchange import get_ticker_history
-from freqtrade.vendor.qtpylib.indicators import awesome_oscillator, PandasObject as qtpylib
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ def populate_indicators(dataframe: DataFrame) -> DataFrame:
     dataframe['adx'] = ta.ADX(dataframe)
 
     # Awesome oscillator
-    dataframe['ao'] = awesome_oscillator(dataframe)
+    dataframe['ao'] = qtpylib.awesome_oscillator(dataframe)
     """
     # Commodity Channel Index: values Oversold:<-100, Overbought:>100
     dataframe['cci'] = ta.CCI(dataframe)

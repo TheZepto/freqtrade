@@ -1,22 +1,41 @@
 #!/usr/bin/env python3
 
+import sys
+import argparse
 import matplotlib  # Install PYQT5 manually if you want to test this helper function
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
-
 from freqtrade import exchange, analyze
+from freqtrade.misc import common_args_parser
 
 
-def plot_analyzed_dataframe(pair: str) -> None:
+def plot_parse_args(args ):
+    parser = common_args_parser(description='Graph utility')
+    parser.add_argument(
+        '-p', '--pair',
+        help = 'What currency pair',
+        dest = 'pair',
+        default = 'BTC_ETH',
+        type = str,
+    )
+    return parser.parse_args(args)
+
+
+def plot_analyzed_dataframe(args) -> None:
     """
     Calls analyze() and plots the returned dataframe
     :param pair: pair as str
     :return: None
     """
+    pair = args.pair
 
     # Init Bittrex to use public API
     exchange._API = exchange.Bittrex({'key': '', 'secret': ''})
-    dataframe = analyze.analyze_ticker(pair)
+    ticker = exchange.get_ticker_history(pair)
+    dataframe = analyze.analyze_ticker(ticker)
+
+    dataframe.loc[dataframe['buy'] == 1, 'buy_price'] = dataframe['close']
+    dataframe.loc[dataframe['sell'] == 1, 'sell_price'] = dataframe['close']
 
     # Two subplots sharing x axis
     fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True)
@@ -47,5 +66,5 @@ def plot_analyzed_dataframe(pair: str) -> None:
 
 
 if __name__ == '__main__':
-    plot_analyzed_dataframe('BTC_ETH')
-
+    args = plot_parse_args(sys.argv[1:])
+    plot_analyzed_dataframe(args)

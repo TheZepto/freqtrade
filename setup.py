@@ -35,9 +35,7 @@ setup(name='freqtrade',
           'TA-Lib',
           'tabulate',
           'cachetools',
-      ],
-      dependency_links=[
-          "git+https://github.com/ericsomdahl/python-bittrex.git@0.2.0#egg=python-bittrex"
+          'pymarketcap',
       ],
       include_package_data=True,
       zip_safe=False,
